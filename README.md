@@ -34,9 +34,6 @@ $ npm run dev
 $ npm run start 
 ```
 
-## Endpoints: 
-	* GET /stock -> obtener el stock de productos
-	* POST /stock -> crear un stock de un producto particular 
-	* PATCH /stock/:stock_id -> actualizar un stock de producto (altas y bajas de stock)
+## API DOC: https://toolboxtest.docs.apiary.io
 
 :)

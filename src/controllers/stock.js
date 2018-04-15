@@ -31,16 +31,16 @@ class StockController {
     create = async ({body: {product_code, entries, outs}}, res) => {
         //crear el stock de un producto (si aun no existe)
         const product = await Product.findOne({code: product_code});
-        if(!product) res.json({error: "El producto no existe en la base de datos"});
+        if(!product) res.json({error: "El producto no existe en la base de datos"}, 404);
         else {
             const stock = await Stock.findOne({product_id: product.id});
             if(!stock){
-                res.json(await Stock.create({product_id: product.id, entries, outs}));
+                res.json(await Stock.create({product_id: product.id, entries, outs}), 201);
             }
             else res.json({
                 error: "El producto ya se encuentra en stock, si desea, actualice el stock",
                 stock_id: stock.id
-            });
+            }, 400);
         }
     };
 
@@ -54,7 +54,8 @@ class StockController {
         else if(type === "out"){
             /*si es una baja, valido la disponibilidad primero*/
             const stock = await Stock.findById(id);
-            if(stock.available_items >= quantity){
+            if(!stock) res.json({"error": "Stock no identificado"}, 404);
+            else if(stock.available_items >= quantity){
                 stock.outs += quantity;
                 stock.save();
                 res.json(stock);
@@ -63,7 +64,7 @@ class StockController {
                 res.json({
                     error: "No hay productos suficientes en el stock",
                     available_items: stock.available_items
-                });
+                }, 409);
             }
         }
     }
